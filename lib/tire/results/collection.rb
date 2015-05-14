@@ -154,7 +154,12 @@ module Tire
       end
 
       def __find_records_by_ids(klass, ids)
-        @options[:load] === true ? klass.find(ids) : klass.find(ids, @options[:load])
+        if @options[:load] == true
+          klass.find(ids)
+        else
+          raise ArgumentError, 'Callable required' unless @options[:load].respond_to?(:call)
+          klass.instance_exec(&@options[:load]).find(ids)
+        end
       end
     end
 
