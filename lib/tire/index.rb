@@ -339,7 +339,7 @@ module Tire
       options.select! { |k, | [:routing, :parent, :replication, :consistency, :refresh, :timeout].include? k }
       params_encoded = options.empty? ? '' : "?#{options.to_param}"
 
-      url    = "#{self.url}/#{type}/#{Utils.escape(id)}#{params_encoded}"
+      url    = "#{self.url}/#{Utils.escape(type)}/#{Utils.escape(id)}#{params_encoded}"
       result = Configuration.client.delete url
       MultiJson.decode(result.body) if result.success?
 
