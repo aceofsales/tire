@@ -325,7 +325,7 @@ module Tire
 
     def remove(*args)
       if args.size > 1
-        type, document = args
+        type, document, options = args
         type           = Utils.escape(type)
         id             = get_id_from_document(document) || document
       else
@@ -335,7 +335,11 @@ module Tire
       end
       raise ArgumentError, "Please pass a document ID" unless id
 
-      url    = "#{self.url}/#{type}/#{Utils.escape(id)}"
+      options ||= {}
+      options.select! { |k, | [:routing, :parent, :replication, :consistency, :refresh, :timeout].include? k }
+      params_encoded = options.empty? ? '' : "?#{options.to_param}"
+
+      url    = "#{self.url}/#{type}/#{Utils.escape(id)}#{params_encoded}"
       result = Configuration.client.delete url
       MultiJson.decode(result.body) if result.success?
 
